@@ -10,19 +10,25 @@ import java.util.ArrayList;
 public class ParsingClass extends DefaultHandler {
 
     ArrayList<String> title = new ArrayList<String>();
-    ArrayList<String> date = new ArrayList<String>();
-    ArrayList<String> about = new ArrayList<String>();
+    ArrayList<String> link = new ArrayList<String>();
+    ArrayList<String> description = new ArrayList<String>();
+    ArrayList<String> pubDate = new ArrayList<String>();
 
     private String tempStore = "";
+
+    boolean newItem = false;
+
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         super.startElement(uri, localName, qName, attributes);
-        if(localName.equalsIgnoreCase("post_title")){
+        if (qName.equalsIgnoreCase("item"))
+            newItem = true;
+        if(localName.equalsIgnoreCase("title") && newItem){
             tempStore = "";
-        } else if (localName.equalsIgnoreCase("post_date")){
+        } else if (localName.equalsIgnoreCase("pubDate") && newItem){
             tempStore = "";
-        } else if (localName.equalsIgnoreCase("guid")){
+        } else if (localName.equalsIgnoreCase("description") && newItem){
             tempStore = "";
         } else {
             tempStore = "";
@@ -38,12 +44,12 @@ public class ParsingClass extends DefaultHandler {
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         super.endElement(uri, localName, qName);
-        if(localName.equalsIgnoreCase("post_title")){
+        if(localName.equalsIgnoreCase("title") && newItem){
             title.add(tempStore);
-        } else if (localName.equalsIgnoreCase("post_date")){
-            date.add(tempStore);
-        } else if (localName.equalsIgnoreCase("guid")) {
-            about.add(tempStore);
+        } else if (localName.equalsIgnoreCase("pubDate") && newItem){
+            pubDate.add(tempStore);
+        } else if (localName.equalsIgnoreCase("description") && newItem) {
+            description.add(tempStore);
         }
         tempStore = "";
     }

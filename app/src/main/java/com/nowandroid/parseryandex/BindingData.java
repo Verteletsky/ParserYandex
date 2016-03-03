@@ -56,9 +56,9 @@ public class BindingData extends BaseAdapter {
             holder = (Holder) convertView.getTag();
         }
 
-        holder.txtTitle.setText(Html.fromHtml("Title: " + title.get(position)));
-        holder.txtTitle.setText(Html.fromHtml("Date: " + date.get(position)));
-        holder.txtTitle.setText(Html.fromHtml("About: " + about.get(position)));
+        holder.txtTitle.setText(title.get(position));
+        holder.txtDate.setText(date.get(position));
+        holder.txtAbout.setText(about.get(position));
 
         return convertView;
     }
