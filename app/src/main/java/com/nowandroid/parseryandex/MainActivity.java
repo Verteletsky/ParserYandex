@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Fragment fragment;
     private ListView list;
     URL url;
-    //ArrayList<String> title = new ArrayList<String>();
+    ArrayList<String> title = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
