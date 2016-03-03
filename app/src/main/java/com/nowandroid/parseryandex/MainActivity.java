@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             XMLReader xmlReader = parser.getXMLReader();
             ParsingClass pc = new ParsingClass();
             xmlReader.setContentHandler(pc);
-            url = new URL("http://pcsalt.com/postservice/?format=xml");
+            url = new URL("https://news.yandex.ru/hardware.rss");
             InputSource inputSource = new InputSource(url.openStream());
             xmlReader.parse(inputSource);
             BindingData bindingData = new BindingData(this,pc.title, pc.date, pc.about);
