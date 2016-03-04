@@ -1,45 +1,33 @@
 package com.nowandroid.parseryandex;
 
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import fullinfo.FullNews;
 
 public class MainActivity extends AppCompatActivity {
 
     Fragment fragment;
-    private ListView list;
+
+    ListView list;
+    ArrayList<PostValue> postValueArrayList;
+
     MyTask mt;
-    BindingData listViewAdapter;
-    Context context;
+    PostBaseAdapter listViewAdapter;
     ProgressDialog dialog;
     ParsingClass pc;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +35,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fragment = new FullNews();
+
         list = (ListView)findViewById(R.id.listview);
-
-        refreshDate();
-    }
-
-    public void refreshDate() {
-        mt = new MyTask();
-        mt.execute();
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(postValueArrayList != null && postValueArrayList.size() > 0){
+                    Intent intentShowPost = new Intent(Intent.ACTION_VIEW, Uri.parse(postValueArrayList.get(position).getLink()));
+                    startActivity(intentShowPost);
+                }
+            }
+        });
+        new MyTask().execute();
     }
 
     class MyTask extends AsyncTask<Void, Void, Void> {
@@ -70,34 +62,20 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-                SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-                SAXParser parser = saxParserFactory.newSAXParser();
-                XMLReader xmlReader = parser.getXMLReader();
-
-                URL url = new URL("https://news.yandex.ru/hardware.rss");
-
-                pc = new ParsingClass();
-                xmlReader.setContentHandler(pc);
-                xmlReader.parse(new InputSource(url.openStream()));
-
-                Log.i("FUCK!!!!!!!!!", String.valueOf(url));
-            } catch (Exception e){
-                e.getMessage();
-            }
+            pc = new ParsingClass();
+            pc.get();
+            postValueArrayList = pc.getPostsList();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-
             if (dialog.isShowing()){
                 dialog.dismiss();
                 Toast.makeText(getApplicationContext(), "Список новостей загружен", Toast.LENGTH_LONG).show();
             }
-
-            listViewAdapter = new BindingData(MainActivity.this, pc.title, pc.pubDate, pc.description);
+            listViewAdapter = new PostBaseAdapter(MainActivity.this, pc.title, pc.pubDate, pc.description, pc.link);
             list.setAdapter(listViewAdapter);
         }
     }

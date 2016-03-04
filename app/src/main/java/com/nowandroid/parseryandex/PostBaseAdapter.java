@@ -2,30 +2,39 @@ package com.nowandroid.parseryandex;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 
-public class BindingData extends BaseAdapter {
+public class PostBaseAdapter extends BaseAdapter {
     ArrayList<String> title;
     ArrayList<String> date;
     ArrayList<String> about;
+    ArrayList<String> link;
     LayoutInflater inflater;
+    Context context;
 
-    public BindingData() {}
+    public PostBaseAdapter(Context context) {
+        this.context = context;
+    }
 
-    public BindingData(Activity act, ArrayList<String> tit, ArrayList<String> dat, ArrayList<String> abo) {
+    public PostBaseAdapter(Activity act, ArrayList<String> tit, ArrayList<String> dat, ArrayList<String> abo, ArrayList<String> lin) {
         this.title = tit;
         this.date = dat;
         this.about = abo;
+        this.link = lin;
         inflater = (LayoutInflater)act.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
+
+
 
     @Override
     public int getCount() {
@@ -43,7 +52,7 @@ public class BindingData extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         Holder holder;
         if(convertView == null){
             holder = new Holder();
@@ -51,6 +60,7 @@ public class BindingData extends BaseAdapter {
             holder.txtTitle = (TextView)convertView.findViewById(R.id.title);
             holder.txtDate = (TextView)convertView.findViewById(R.id.date);
             holder.txtAbout = (TextView)convertView.findViewById(R.id.about);
+            holder.txtLink = (TextView)convertView.findViewById(R.id.link);
             convertView.setTag(holder);
         } else {
             holder = (Holder) convertView.getTag();
@@ -59,11 +69,14 @@ public class BindingData extends BaseAdapter {
         holder.txtTitle.setText(title.get(position));
         holder.txtDate.setText(date.get(position));
         holder.txtAbout.setText(about.get(position));
+        holder.txtLink.setText(link.get(position));
 
         return convertView;
     }
 
+
     public class Holder{
-        TextView txtTitle, txtDate, txtAbout;
+        TextView txtTitle, txtDate, txtAbout, txtLink;
+        RelativeLayout activityMainLayout;
     }
 }
