@@ -18,9 +18,7 @@ public class NextActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_next);
 
-        TextView textView = (TextView) findViewById(R.id.textView);
         webView = (WebView) findViewById(R.id.webViewActivity);
-
 
         //js
         webView.getSettings().setJavaScriptEnabled(true);
@@ -30,12 +28,8 @@ public class NextActivity extends AppCompatActivity {
         webView.setWebViewClient(new WebViewClient());
 
         Intent intent = getIntent();
-        Integer in = intent.getIntExtra("position", 0);
-        String link = intent.getStringExtra("link");
+        String link = intent.getStringExtra("postValue");
 
-        textView.setText(String.valueOf(in));
         webView.loadUrl(link);
-        //webView.loadUrl("https://news.yandex.ru/yandsearch?cl4url=chezasite.com%2Fnews%2Fxiaomi-mi-5-pro-preorder-92013.html");
-
     }
 }

@@ -1,6 +1,5 @@
 package com.nowandroid.parseryandex;
 
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,38 +9,34 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import fullinfo.FullNews;
+import HelpParse.ParsingClass;
+import HelpParse.PostBaseAdapter;
+import HelpParse.PostValue;
+import fullinfo.NextActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    Fragment fragment;
-
     ListView list;
     ArrayList<PostValue> postValueArrayList;
-
-    MyTask mt;
-    PostBaseAdapter listViewAdapter;
-    ProgressDialog dialog;
-    ParsingClass pc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fragment = new FullNews();
-
         list = (ListView)findViewById(R.id.listview);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(postValueArrayList != null && postValueArrayList.size() > 0){
-                    Intent intentShowPost = new Intent(Intent.ACTION_VIEW, Uri.parse(postValueArrayList.get(position).getLink()));
+//                    Intent intentShowPost = new Intent(Intent.ACTION_VIEW, Uri.parse(postValueArrayList.get(position).getLink()));
+//                    startActivity(intentShowPost);
+                    String v = String.valueOf(Uri.parse(postValueArrayList.get(position).getLink()));
+                    Intent intentShowPost = new Intent(getApplicationContext(), NextActivity.class);
+                    intentShowPost.putExtra("postValue", v);
                     startActivity(intentShowPost);
                 }
             }
@@ -50,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class MyTask extends AsyncTask<Void, Void, Void> {
+        ProgressDialog dialog;
+        ParsingClass pc;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -71,12 +69,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (dialog.isShowing()){
-                dialog.dismiss();
-                Toast.makeText(getApplicationContext(), "Список новостей загружен", Toast.LENGTH_LONG).show();
-            }
-            listViewAdapter = new PostBaseAdapter(MainActivity.this, pc.title, pc.pubDate, pc.description, pc.link);
-            list.setAdapter(listViewAdapter);
+            PostBaseAdapter postBaseAdapter = new PostBaseAdapter(MainActivity.this, postValueArrayList);
+            list.setAdapter(postBaseAdapter);
+            dialog.dismiss();
         }
     }
 
